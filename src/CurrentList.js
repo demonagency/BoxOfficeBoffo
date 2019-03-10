@@ -25,9 +25,17 @@ class CurrentList extends Component {
 	};
 
 	// need to figure out how to delete only one movie from the list ie. .child() but for now it is deleting the whole list
-	handleDelete = (key) => {
-		console.log(key);
-		const dbRef = firebase.database().ref(this.props.userName);
+	handleDelete = async () => {
+
+		await this.state.items.map((value) => {
+			const firebaseKey = value.key;
+			this.setState({
+				firebaseKey: firebaseKey
+			})
+		})
+
+		const dbRef = firebase.database().ref(`${this.props.userName}/${this.state.firebaseKey}`);
+		console.log(this.state.firebaseKey);
 		dbRef.remove();
 	}
 

@@ -173,7 +173,7 @@ class GamePage extends Component {
                     {/* we give the chosenMovies to CurrentList Component as a props */}
 
                 </section>
-                <CurrentList chosenMovies={this.state.chosenMovies} />
+                <CurrentList userName={this.props.userName} chosenMovies={this.state.chosenMovies} />
             </Fragment>
 
         )
