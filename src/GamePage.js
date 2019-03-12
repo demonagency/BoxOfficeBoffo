@@ -10,7 +10,7 @@ import CurrentList from './CurrentList.js';
 import UserArea from './UserArea.js'
 import ResetConfirm from './ResetConfirm'
 import CompletedLists from "./CompletedLists.js";
-import MovieItem from './MovieItem.js';
+import Modal from './Modal.js';
 
 
 const apiUrl = 'https://api.themoviedb.org/3/discover/movie/'
@@ -24,14 +24,26 @@ class GamePage extends Component {
             year: "2019",
             results: [],
             clickedMovie: '',
-            chosenMovies: this.props.chosenMovies,
+            chosenMovies: [],
             displayList: [],
-            class: 'addMovie',
-            active: true
+            class: '',
+            isShowing: false
         }
     }
     // we're making fetchData it's own function that gets the currentYear from GamePage through props. Then fetchData can be called many times depending on situation
     // used props to get the year from GamePage and saved as variable. Variable is used in search parameters to make that dynamic
+    openModalHandler = () => {
+        this.setState({
+            isShowing: true
+        });
+    }
+
+    closeModalHandler = () => {
+        this.setState({
+            isShowing: false
+        });
+    }
+
     // when component mounts, it will fetchData which is with the year 2019 as default
 
     componentDidMount() {
@@ -108,8 +120,8 @@ class GamePage extends Component {
             dbRef.push(data);
             // we get this informations from the click and set the state of that clicked movie
             await this.setState({
-                clickedMovie: data
-
+                clickedMovie: data,
+                class: 'hide'
             })
             // console.log('data after clicking', data)
             //once that state is set (await) we duplicate the chosen movie state and push the clickedMovie to the newMovieArray
@@ -171,6 +183,18 @@ class GamePage extends Component {
         return (
             <Fragment>
                 <section className="gamePage">
+                    <div>
+                        {this.state.isShowing ?
+                            <div onClick={this.closeModalHandler} className="backDrop"></div> :
+                            null}
+
+                        <Modal
+                            className="modal"
+                            show={this.state.isShowing}
+                            close={this.closeModalHandler}>
+                            Need some more info?
+                        </Modal>
+                    </div>
                     <p className="instructions">Select a year and start adding movies to your list.</p>
                     <select className="yearDropDown" onChange={this.handleYear}>
                         <option value="2019">2019</option>
@@ -228,17 +252,16 @@ class GamePage extends Component {
                             <i class="fas fa-list-ul"></i>
                             <span className="visuallyHidden">Completed Lists</span>
                         </Link>
-                        <Link to="/" className="homeButton">
+                        <button className="helpButton homeButton" onClick={this.openModalHandler}>
                             <i class="fas fa-question"></i>
                             <span className="visuallyHidden">More info</span>
-                        </Link>
+                        </button>
                     </footer>
                 </section>
 
                 <div className="currentListContainer">
                     <UserArea className="float" userName={this.props.userName} />
                     <CurrentList chosenMovies={this.state.chosenMovies} userName={this.props.userName} className="float" />
-                    {/* <ResetConfirm className={this.state.class}/> */}
                 </div>
             </Fragment>
         )
